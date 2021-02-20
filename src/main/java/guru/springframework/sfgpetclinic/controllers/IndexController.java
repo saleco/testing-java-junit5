@@ -7,7 +7,7 @@ public class IndexController {
         return "index";
     }
 
-    public String oopsHandler(){
+    public String oopsHandler() {
         throw new ValueNotFoundException();
     }
 }
