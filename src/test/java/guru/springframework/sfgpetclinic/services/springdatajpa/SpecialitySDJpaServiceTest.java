@@ -8,6 +8,9 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.Optional;
+
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -20,6 +23,27 @@ class SpecialitySDJpaServiceTest {
     //tells mockito to create a real instance of the class under test
     @InjectMocks
     SpecialitySDJpaService specialitySDJpaService;
+
+    @Test
+    void testDeleteByObject() {
+        Speciality speciality = new Speciality();
+
+        specialitySDJpaService.delete(speciality);
+
+        verify(specialtyRepository).delete(any(Speciality.class));
+    }
+
+    @Test
+    void findByIdTest() {
+        Speciality speciality = new Speciality();
+
+        when(specialtyRepository.findById(1L)).thenReturn(Optional.of(speciality));
+
+        Speciality foundSpecialty = specialitySDJpaService.findById(1L);
+
+        assertThat(foundSpecialty).isNotNull();
+        verify(specialtyRepository).findById(anyLong());
+    }
 
     @Test
     void deleteById() {
