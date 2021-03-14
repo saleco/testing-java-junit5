@@ -28,6 +28,9 @@ class OwnerControllerTest {
     @Mock
     OwnerService ownerService;
 
+    @Mock
+    Model model;
+
     @InjectMocks
     OwnerController ownerController;
 
@@ -93,17 +96,20 @@ class OwnerControllerTest {
     void processFindFormWildcardFound() {
         //given
         Owner owner = new Owner(1L, "Joe", "FindMe");
+        InOrder inOrder = inOrder(ownerService, model);
 
         //when
-        String viewName = ownerController.processFindForm(owner, bindingResult, null);
+        String viewName = ownerController.processFindForm(owner, bindingResult, model);
 
         //then
         //check the argument passed to ownerService mock
         assertThat("%FindMe%").isEqualToIgnoringCase(stringArgumentCaptor.getValue());
         assertThat("owners/ownersList").isEqualTo(viewName);
+
+        //inorder asserts
+        inOrder.verify(ownerService).findAllByLastNameLike(anyString());
+        inOrder.verify(model).addAttribute(anyString(), anyList());
     }
-
-
 
     @Test
     void processCreationFormWhenBindingResultsHasErrors() {

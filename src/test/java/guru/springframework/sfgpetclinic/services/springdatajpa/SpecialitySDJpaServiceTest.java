@@ -52,7 +52,7 @@ class SpecialitySDJpaServiceTest {
         assertThat(foundSpecialty).isNotNull();
 
         //verify(specialtyRepository).findById(anyLong());
-        then(specialtyRepository).should().findById(anyLong());
+        then(specialtyRepository).should(timeout(100)).findById(anyLong());
         //then(specialtyRepository).should(times(1)).findById(anyLong());
         then(specialtyRepository).shouldHaveNoMoreInteractions();
     }
@@ -68,7 +68,7 @@ class SpecialitySDJpaServiceTest {
 
         //very it was called twice
         //then
-        then(specialtyRepository).should(times(2)).deleteById(1L);
+        then(specialtyRepository).should(timeout(100).times(2)).deleteById(1L);
     }
 
     @Test
