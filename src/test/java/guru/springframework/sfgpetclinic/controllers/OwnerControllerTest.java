@@ -9,6 +9,8 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.*;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -70,12 +72,13 @@ class OwnerControllerTest {
 //        given(ownerService.findAllByLastNameLike(stringArgumentCaptor.capture())).willReturn(owners);
 
         //when
-        String viewName = ownerController.processFindForm(owner, bindingResult, Mockito.mock(Model.class));
+        String viewName = ownerController.processFindForm(owner, bindingResult, model);
 
         //then
         //check the argument passed to ownerService mock
         assertThat("%Buck%").isEqualToIgnoringCase(stringArgumentCaptor.getValue());
         assertThat("redirect:/owners/1").isEqualTo(viewName);
+        verifyZeroInteractions(model);
     }
 
     @Test
@@ -90,6 +93,7 @@ class OwnerControllerTest {
         //check the argument passed to ownerService mock
         assertThat("%DontFindMe%").isEqualToIgnoringCase(stringArgumentCaptor.getValue());
         assertThat("owners/findOwners").isEqualTo(viewName);
+        verifyZeroInteractions(model);
     }
 
     @Test
@@ -108,9 +112,11 @@ class OwnerControllerTest {
 
         //inorder asserts
         inOrder.verify(ownerService).findAllByLastNameLike(anyString());
-        inOrder.verify(model).addAttribute(anyString(), anyList());
+        inOrder.verify(model, times(1)).addAttribute(anyString(), anyList());
+        verifyNoMoreInteractions(model);
     }
 
+    @MockitoSettings(strictness = Strictness.LENIENT)
     @Test
     void processCreationFormWhenBindingResultsHasErrors() {
         //given
@@ -126,6 +132,7 @@ class OwnerControllerTest {
 
     }
 
+    @MockitoSettings(strictness = Strictness.LENIENT)
     @Test
     void processCreationFormWhenBindingResultsHasNoErrors() {
         //given
